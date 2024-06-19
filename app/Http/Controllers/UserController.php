@@ -2,32 +2,36 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UserRequest;
+use App\Http\Resources\UserResource;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected $userService;
+
+
     public function index()
     {
-        //
+        $user = User::all();
+        return UserResource::collection($user);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(UserRequest $request)
     {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
+        // Verifica se o usuário autenticado tem tipo 0
+        $authenticatedUser = $request->user();
+        if ($authenticatedUser->type_user != 0) {
+            return response()->json([
+                'error' => 'Somente administradores podem criar usuários.'
+            ], 403);
+        }
+        //Pega apenas o que foi validado
+        $data = $request->validated();
+        $data['password'] = bcrypt($request->password);
+        $user = User::create($data);
+        return new UserResource($user);
     }
 
     /**
@@ -35,7 +39,8 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $user = User::where('id', $id)->firstOrFail();
+        return new UserResource($user);
     }
 
     /**

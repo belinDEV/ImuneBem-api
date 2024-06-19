@@ -13,7 +13,7 @@ class Scheduling extends Model
         'patient_id',
         'employee_id',
         'vaccines_id',
-        'status',
+        'status_id',
         'date',
         'description',
     ];
@@ -33,8 +33,8 @@ class Scheduling extends Model
         return $this->belongsTo(Vaccine::class);
     }
 
-    public function user()
+    public function status()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Status::class);
     }
 }

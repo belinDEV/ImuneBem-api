@@ -16,12 +16,13 @@ return new class extends Migration
             $table->unsignedBigInteger('patient_id');
             $table->unsignedBigInteger('employee_id');
             $table->unsignedBigInteger('vaccines_id');
-            $table->integer('status', false, false);
+            $table->unsignedBigInteger('status_id'); // Nome da coluna corrigido
             $table->date('date');
             $table->string('description', 60);
             $table->foreign('patient_id')->references('id')->on('patients');
             $table->foreign('employee_id')->references('id')->on('employees');
             $table->foreign('vaccines_id')->references('id')->on('vaccines');
+            $table->foreign('status_id')->references('id')->on('statuses'); // Nome da coluna corrigido
             $table->timestamps();
         });
     }
