@@ -11,14 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('vaccines', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id');
             $table->string('name', 30);
-            $table->string('email', 30)->unique();
-            $table->string('cpf', 11)->unique();
-            $table->string('password', 45);
-            $table->integer('type_user', false, false);
-            $table->rememberToken();
+            $table->integer('recommended_age', false, false);
+            $table->integer('doses', false, false);
+            $table->string('observation', 60);
+            $table->date('date_limit');
+            $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
         });
     }
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('vaccines');
     }
 };
