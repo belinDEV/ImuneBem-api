@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\EmployeeResource;
+use App\Http\Resources\EmployeeRequest;
+use App\Models\Employee;
 use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
@@ -11,8 +14,10 @@ class EmployeeController extends Controller
      */
     public function index()
     {
-        //
+        $employee = Employee::all();
+        return EmployeeResource ::collection($employee);
     }
+
 
     /**
      * Show the form for creating a new resource.

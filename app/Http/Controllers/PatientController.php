@@ -1,8 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
+use App\Http\Resources\PatientResource;
+use App\Models\Patient;
+
 
 class PatientController extends Controller
 {
@@ -11,7 +13,8 @@ class PatientController extends Controller
      */
     public function index()
     {
-        //
+        $patient = Patient::all();
+        return PatientResource::collection($patient);
     }
 
     /**
@@ -27,7 +30,9 @@ class PatientController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->validated();
+        $patient = Patient::create($data);
+        return new PatientResource($patient);
     }
 
     /**
@@ -35,7 +40,8 @@ class PatientController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $patient = Patient::where('id', $id)->firstOrFail();
+        return new PatientResource($patient);
     }
 
     /**
