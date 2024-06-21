@@ -5,12 +5,16 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
-use Illuminate\Http\Request;
+use App\Services\ResponseService;
 
 class UserController extends Controller
 {
-    protected $userService;
+    protected $responceService;
 
+    public function __construct(ResponseService $responceService)
+    {
+        $this->responceService = $responceService;
+    }
 
     public function index()
     {
@@ -20,13 +24,6 @@ class UserController extends Controller
 
     public function store(UserRequest $request)
     {
-        // Verifica se o usuário autenticado tem tipo 0
-        $authenticatedUser = $request->user();
-        if ($authenticatedUser->type_user != 0) {
-            return response()->json([
-                'error' => 'Somente administradores podem criar usuários.'
-            ], 403);
-        }
         //Pega apenas o que foi validado
         $data = $request->validated();
         $data['password'] = bcrypt($request->password);
@@ -34,25 +31,14 @@ class UserController extends Controller
         return new UserResource($user);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $user = User::where('id', $id)->firstOrFail();
         return new UserResource($user);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(UserRequest $request, string $id)
     {
-
         //Busca o user pelo id
         $user = User::where('id', $id)->firstOrFail();
         //Passa os dados que vão ser atualizados
@@ -60,20 +46,16 @@ class UserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'cpf' => $request->cpf,
-            'password' => $request->password,
+            'password' => bcrypt($request->password),
             'type_user' => $request->type_user
         ]);
         return new UserResource($user);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(UserRequest $request, string $id)
+    public function destroy(string $id)
     {
-        $user = Users::find($id);
-
+        $user = User::where('id', $id)->firstOrFail();
         $user->delete();
-
+        return $this->responceService->sendMessage('message', 'Usuário deletado com sucesso', 200);
     }
 }

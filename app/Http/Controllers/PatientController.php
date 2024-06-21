@@ -1,70 +1,86 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use App\Http\Resources\PatientResource;
 use App\Models\Patient;
-
+use App\Models\User;
+use App\Services\ResponseService;
 
 class PatientController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    protected $responceService;
+
+    public function __construct(ResponseService $responceService)
     {
-        $patient = Patient::all();
-        return PatientResource::collection($patient);
+        $this->responceService = $responceService;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function index(Request $request)
     {
-        //
+        // Pega o id do usuario salvo no token
+        $userId = $request->attributes->get('user_id');
+        $user = User::find($userId); // Recupera a instância do modelo User
+
+        // Verifica se o usuário foi encontrado
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        // Se for admin retorna todos os pacientes
+        if ($user->type_user == 0) {
+            $patients = Patient::all();
+            // Se for cuidador retorna todos os pacientes que estão associados a ele
+        } else if ($user->type_user == 1) {
+            $patients = Patient::where('user_id', $userId)->get();
+            // Se for usuário retorna o próprio cadastro no sistema
+        } else {
+            $patients = Patient::where('id', $userId)->get();
+        }
+
+        return PatientResource::collection($patients);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        $data = $request->validated();
+        // Pega o id do usuario salvo no token
+        $userId = $request->attributes->get('user_id');
+        // Pega os dados validados do request
+        $data = $request->all();
+        // Adiciona o user_id nos dados do paciente
+        $data['user_id'] = $userId;
+        // Cria o paciente com os dados atualizados
         $patient = Patient::create($data);
+        // Retorna o recurso do paciente criado
         return new PatientResource($patient);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $patient = Patient::where('id', $id)->firstOrFail();
         return new PatientResource($patient);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
-        //
+        $userId = $request->attributes->get('user_id');
+        $patient = Patient::where('id', $id)->firstOrFail();
+        $patient->update([
+            'name' => $request->name,
+            'age' => $request->age,
+            'register' => $request->register,
+            'user_id' => $userId,
+        ]);
+        return $this->responceService->sendMessage('message', 'Paciente atualizado com sucesso', 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        //
+        //firstOrFail (ELe retorna um erro 404 caso n encontre o id do patient (Paciente em pt-br))
+        $patient = Patient::where('id', $id)->firstOrFail();
+        $patient->delete();
+        //service que retorna uma mensagem em Json
+        return $this->responceService->sendMessage('message', 'Usuário deletado com sucesso', 200);
     }
 }

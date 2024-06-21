@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Http\Resources\PatientResource;
-use App\Models\Patient;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -14,24 +14,24 @@ class AuthController extends Controller
     {
         // Tente encontrar o usuário com o CPF fornecido
         $user = User::where('cpf', $request->cpf)->first();
-
-        if ($user) {
-            // Deleta todos os tokens antigos
-            $user->tokens()->delete();
-            // Gera um token com informações adicionais (claims)
-            $token = $user->createToken($request->device_name, ['id' => $user->id, 'type_user' => $user->type]);
+        if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
-                'token' => $token->plainTextToken,
-                'user' => new UserResource($user),
-            ], 200);
+                'message' => 'Dados inválidos'
+            ], Response::HTTP_UNAUTHORIZED);
         }
 
-        $patient = Patient::where('name', $request->name)->firstOrFail();
-        $patient->tokens()->delete();
-        $token = $patient->createToken($request->device_name, ['id' => $patient->id]);
+        // Deleta todos os tokens antigos
+        $user->tokens()->delete();
+        // Gera um token com informações adicionais (claims)
+        $token = $user->createToken(
+            'ImuneBem',
+            ['*'],
+            now()->addHours(2),
+            ['user_id' => $user->id, 'type_user' => $user->type_user]
+        );
         return response()->json([
             'token' => $token->plainTextToken,
-            'patient' => new PatientResource($patient),
+            'user' => new UserResource($user),
         ], 200);
     }
 }

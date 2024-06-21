@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PatientController;
 use Illuminate\Http\Request;
@@ -24,7 +25,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/login', [AuthController::class, 'auth'])->name('login.auth');
 
 Route::prefix('/users')->group(function () {
-    Route::middleware(['auth:sanctum'])->group(function () {
+    Route::middleware(['auth:sanctum', 'extract.user.id'])->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('users.index');
         Route::get('/{id}', [UserController::class, 'show'])->name('users.show');
         Route::post('/', [UserController::class, 'store'])->name('users.store');
@@ -34,11 +35,21 @@ Route::prefix('/users')->group(function () {
 });
 
 Route::prefix('/patients')->group(function () {
-    Route::middleware(['auth:sanctum'])->group(function () {
+    Route::middleware(['auth:sanctum', 'extract.user.id'])->group(function () {
         Route::get('/', [PatientController::class, 'index'])->name('patients.index');
         Route::get('/{id}', [PatientController::class, 'show'])->name('patients.show');
         Route::post('/', [PatientController::class, 'store'])->name('patients.store');
         Route::put("/{id}", [PatientController::class, 'update'])->name('patients.update');
         Route::delete("/{id}", [PatientController::class, 'destroy'])->name('patients.destroy');
+    });
+});
+
+Route::prefix('/employees')->group(function () {
+    Route::middleware(['auth:sanctum', 'extract.user.id'])->group(function () {
+        Route::get('/', [EmployeeController::class, 'index'])->name('employees.index');
+        Route::get('/{id}', [EmployeeController::class, 'show'])->name('employees.show');
+        Route::post('/', [EmployeeController::class, 'store'])->name('employees.store');
+        Route::put("/{id}", [EmployeeController::class, 'update'])->name('employees.update');
+        Route::delete("/{id}", [EmployeeController::class, 'destroy'])->name('employees.destroy');
     });
 });

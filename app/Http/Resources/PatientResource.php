@@ -7,18 +7,13 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class PatientResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
     public function toArray(Request $request): array
     {
         return [
             'id' => $this->id,
             'name' => $this->name,
             'register' => $this->register,
-            'age' => $this->cpf,
+            'age' => $this->age,
             'user_id' => $this->user_id,
         ];
     }

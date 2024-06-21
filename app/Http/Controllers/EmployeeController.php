@@ -3,67 +3,60 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\EmployeeResource;
-use App\Http\Resources\EmployeeRequest;
 use App\Models\Employee;
+use App\Services\ResponseService;
 use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected $responceService;
+
+    public function __construct(ResponseService $responceService)
+    {
+        $this->responceService = $responceService;
+    }
     public function index()
     {
         $employee = Employee::all();
-        return EmployeeResource ::collection($employee);
+        return EmployeeResource::collection($employee);
     }
 
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        // Pega o id do usuario salvo no token
+        $userId = $request->attributes->get('user_id');
+        // Pega os dados validados do request
+        $data = $request->all();
+        // Adiciona o user_id nos dados do funcionario
+        $data['user_id'] = $userId;
+        // Cria o funcionario com os dados atualizados
+        $employee = Employee::create($data);
+        // Retorna o recurso do funcionario criado
+        return new EmployeeResource($employee);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
-        //
+        $employee = Employee::where('id', $id)->firstOrFail();
+        return new EmployeeResource($employee);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
-        //
+        $userId = $request->attributes->get('user_id');
+        $employee = Employee::where('id', $id)->firstOrFail();
+        $employee->update([
+            'name' => $request->name,
+            'register' => $request->register,
+            'user_id' => $userId,
+        ]);
+        return $this->responceService->sendMessage('message', 'Funcionário atualizado com sucesso', 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        //
+        $employee = Employee::where('id',$id)->firstOrFail();
+        $employee->delete();
+        return $this->responceService->sendMessage('message', 'Funcionário deletado com sucesso', 200);
     }
 }
