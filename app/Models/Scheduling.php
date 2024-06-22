@@ -28,7 +28,7 @@ class Scheduling extends Model
         return $this->belongsTo(Employee::class);
     }
 
-    public function vaccine()
+    public function vaccines()
     {
         return $this->belongsTo(Vaccine::class);
     }

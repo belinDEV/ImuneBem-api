@@ -13,13 +13,19 @@ class SchedulingRequest extends FormRequest
 
     public function rules()
     {
-        return [
+        $rules = [
             'patient_id' => 'required|exists:patients,id',
-            'employee_id' => 'required|exists:employees,id',
+            'employee_id' => 'exists:employees,id',
             'vaccines_id' => 'required|exists:vaccines,id',
             'date' => 'required|date',
             'description' => 'required|string|max:60',
         ];
+
+        if ($this->isMethod('put') || $this->isMethod('patch')) {
+            $rules['employee_id'] = 'required|exists:employees,id';
+        }
+
+        return $rules;
     }
 
     public function messages()
@@ -27,6 +33,7 @@ class SchedulingRequest extends FormRequest
         return [
             'patient_id.exists' => 'O paciente selecionado não existe.',
             'employee_id.exists' => 'O funcionário selecionado não existe.',
+            'employee_id.required' => 'O campo funcionário é obrigatório ao atualizar.',
             'vaccines_id.exists' => 'A vacina selecionada não existe.',
         ];
     }

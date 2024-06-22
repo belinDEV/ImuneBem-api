@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('schedulings', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('patient_id');
-            $table->unsignedBigInteger('employee_id');
+            $table->unsignedBigInteger('employee_id')->nullable();
             $table->unsignedBigInteger('vaccines_id');
             $table->unsignedBigInteger('status_id')->default(1);
             $table->date('date');
