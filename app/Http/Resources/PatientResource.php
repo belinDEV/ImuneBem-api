@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -12,9 +13,8 @@ class PatientResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'register' => $this->register,
             'age' => $this->age,
-            'user_id' => $this->user_id,
+            'created' => Carbon::make($this->created_at)->format('d/m/Y - H:i:s'),
         ];
     }
 }

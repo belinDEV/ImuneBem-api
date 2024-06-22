@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('cpf', 11)->unique();
             $table->string('password', 200);
             $table->integer('type_user', false, false);
-            $table->rememberToken();
             $table->timestamps();
         });
     }

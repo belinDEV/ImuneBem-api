@@ -9,6 +9,15 @@ class Vaccine extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name',
+        'recommended_age',
+        'doses',
+        'observation',
+        'date_limit',
+        'user_id'
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
