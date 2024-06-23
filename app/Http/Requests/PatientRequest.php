@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Rules\EmailExists;
 
 class PatientRequest extends FormRequest
 {
@@ -16,6 +17,7 @@ class PatientRequest extends FormRequest
         return [
             'name' => 'required|string|max:30',
             'age' => 'required|integer|min:0',
+            'linked_email' => ['required', 'string', 'email', 'max:60', 'exists:users,email'],
         ];
     }
 
@@ -28,6 +30,11 @@ class PatientRequest extends FormRequest
             'age.required' => 'A idade é obrigatória.',
             'age.integer' => 'A idade deve ser um número inteiro.',
             'age.min' => 'A idade deve ser um número positivo.',
+            'linked_email.required' => 'O email é obrigatório.',
+            'linked_email.string' => 'O email deve ser uma string.',
+            'linked_email.email' => 'O email deve ser um endereço de email válido.',
+            'linked_email.max' => 'O email não pode ter mais que 60 caracteres.',
+            'linked_email.exists' => 'O email fornecido não existe.',
         ];
     }
 }

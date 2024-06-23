@@ -14,6 +14,7 @@ class EmployeeResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'user_id' => $this->user_id,
+            'description' => $this->description,
             'created' => Carbon::make($this->created_at)->format('d/m/Y - H:i:s'),
         ];
     }

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->string('name', 30);
             $table->integer('age', false, false);
+            $table->string('linked_email', 60);
             $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
         });

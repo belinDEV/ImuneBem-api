@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PatientRequest;
 use Illuminate\Http\Request;
 use App\Http\Resources\PatientResource;
 use App\Models\Patient;
@@ -37,7 +38,7 @@ class PatientController extends Controller
         return PatientResource::collection($patients);
     }
 
-    public function store(Request $request)
+    public function store(PatientRequest $request)
     {
         // Pega o id do usuario salvo no token
         $userId = $request->attributes->get('user_id');
@@ -48,9 +49,10 @@ class PatientController extends Controller
             return $this->responceService->sendMessage('message', 'Usuário sem permição para criar um paciente', 404);
         }
         // Pega os dados validados do request
-        $data = $request->all();
+        $data = $request->validated();
+        $userVinculated = User::where('email', $data['linked_email'])->first();
         // Adiciona o user_id nos dados do paciente
-        $data['user_id'] = $userId;
+        $data['user_id'] = $userVinculated->id;
         // Cria o paciente com os dados atualizados
         Patient::create($data);
         // Retorna o recurso do paciente criado

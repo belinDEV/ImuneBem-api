@@ -15,6 +15,7 @@ class PatientResource extends JsonResource
             'name' => $this->name,
             'age' => $this->age,
             'user_id' => $this->user_id,
+            'linked_email' => $this->linked_email,
             'created' => Carbon::make($this->created_at)->format('d/m/Y - H:i:s'),
         ];
     }
