@@ -15,10 +15,12 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('patient_id');
             $table->unsignedBigInteger('employee_id')->nullable();
-            $table->unsignedBigInteger('vaccines_id');
+            $table->unsignedBigInteger('vaccines_id')->nullable();
             $table->unsignedBigInteger('status_id')->default(1);
             $table->date('date');
+            $table->integer('type', false, false);
             $table->string('description', 60);
+
             $table->foreign('patient_id')->references('id')->on('patients');
             $table->foreign('employee_id')->references('id')->on('employees');
             $table->foreign('vaccines_id')->references('id')->on('vaccines');

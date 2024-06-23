@@ -18,8 +18,8 @@ class UserController extends Controller
 
     public function index()
     {
-        $user = User::all();
-        return UserResource::collection($user);
+        $users = User::where('type_user', '<>', 0)->get();
+        return UserResource::collection($users);
     }
 
     public function store(UserRequest $request)

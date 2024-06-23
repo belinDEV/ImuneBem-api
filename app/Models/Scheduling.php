@@ -16,6 +16,7 @@ class Scheduling extends Model
         'status_id',
         'date',
         'description',
+        'type'
     ];
 
     public function patient()
