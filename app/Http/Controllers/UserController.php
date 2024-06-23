@@ -6,6 +6,7 @@ use App\Http\Requests\UserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Services\ResponseService;
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
@@ -37,7 +38,7 @@ class UserController extends Controller
         return new UserResource($user);
     }
 
-    public function update(UserRequest $request, string $id)
+    public function update(Request $request, string $id)
     {
         //Busca o user pelo id
         $user = User::where('id', $id)->firstOrFail();
