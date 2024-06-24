@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('vaccines', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->string('name', 30);
+            $table->string('name', 60);
             $table->integer('recommended_age', false, false);
             $table->integer('doses', false, false);
             $table->string('observation', 255);
