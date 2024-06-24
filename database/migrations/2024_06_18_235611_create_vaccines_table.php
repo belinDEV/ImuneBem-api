@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('name', 60);
             $table->integer('recommended_age', false, false);
             $table->integer('doses', false, false);
-            $table->string('observation', 255);
+            $table->text('observation');
             $table->date('date_limit');
             $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
