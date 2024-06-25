@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\InfoController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\SchedulingController;
@@ -15,6 +16,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('/login', [AuthController::class, 'auth'])->name('login.auth');
+Route::middleware(['auth:sanctum', 'extract.user.id'])->group(function () {
+    Route::get('/infos', [InfoController::class, 'index'])->name('infos.index');
+});
 
 Route::prefix('/users')->group(function () {
     Route::middleware(['auth:sanctum', 'extract.user.id'])->group(function () {
