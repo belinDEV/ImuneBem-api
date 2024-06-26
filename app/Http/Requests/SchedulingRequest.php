@@ -24,6 +24,7 @@ class SchedulingRequest extends FormRequest
 
         if ($this->isMethod('put') || $this->isMethod('patch')) {
             $rules['professional_id'] = 'required|exists:users,id';
+            $rules['status_id'] = 'required|exists:statuses,id';
         }
 
         return $rules;
@@ -37,6 +38,8 @@ class SchedulingRequest extends FormRequest
             'professional_id.required' => 'O campo profissional é obrigatório ao atualizar.',
             'vaccines_id.exists' => 'A vacina selecionada não existe.',
             'type.in' => 'O campo tipo deve ser 0 ou 1.',
+            'status_id.exists' => 'O status selecionado não existe.',
+            'status_id.required' => 'O campo status é obrigatório ao atualizar.',
         ];
     }
 
