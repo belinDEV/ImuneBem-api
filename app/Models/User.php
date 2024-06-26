@@ -20,11 +20,6 @@ class User extends Authenticatable
         'type_user'
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
@@ -34,10 +29,13 @@ class User extends Authenticatable
     {
         return $this->hasMany(Vaccine::class);
     }
-    public function employees()
+
+    // Relacionamento com usuarios
+    public function schedulings()
     {
-        return $this->hasMany(Employee::class);
+        return $this->hasMany(Scheduling::class, 'professional_id');
     }
+
     public function patients()
     {
         return $this->hasMany(Patient::class);

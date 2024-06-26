@@ -11,12 +11,12 @@ class SchedulingResource extends JsonResource
         return [
             'id' => $this->id,
             'patient_name' => $this->patient->name,
-            'employee_name' => optional($this->employee)->name,
+            'professional_name' => optional($this->professional)->name,
             'vaccine_name' => optional($this->vaccines)->name,
             'status' => $this->status->description,
             'date' => $this->date,
             'description' => $this->description,
-            'type' => $this->type
+            'type' => $this->type,
         ];
     }
 }

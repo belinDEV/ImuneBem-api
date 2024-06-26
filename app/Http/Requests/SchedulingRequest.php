@@ -16,14 +16,14 @@ class SchedulingRequest extends FormRequest
     {
         $rules = [
             'patient_id' => 'required|exists:patients,id',
-            'employee_id' => 'exists:employees,id',
+            'professional_id' => 'exists:users,id',
             'date' => 'required|date',
             'description' => 'required|string|max:60',
             'type' => 'required|in:0,1',
         ];
 
         if ($this->isMethod('put') || $this->isMethod('patch')) {
-            $rules['employee_id'] = 'required|exists:employees,id';
+            $rules['professional_id'] = 'required|exists:users,id';
         }
 
         return $rules;
@@ -33,8 +33,8 @@ class SchedulingRequest extends FormRequest
     {
         return [
             'patient_id.exists' => 'O paciente selecionado não existe.',
-            'employee_id.exists' => 'O funcionário selecionado não existe.',
-            'employee_id.required' => 'O campo funcionário é obrigatório ao atualizar.',
+            'professional_id.exists' => 'O profissional selecionado não existe.',
+            'professional_id.required' => 'O campo profissional é obrigatório ao atualizar.',
             'vaccines_id.exists' => 'A vacina selecionada não existe.',
             'type.in' => 'O campo tipo deve ser 0 ou 1.',
         ];
@@ -42,8 +42,19 @@ class SchedulingRequest extends FormRequest
 
     protected function withValidator(Validator $validator)
     {
+        //Cria uma regra para deixar o codigo da vacina como obrigatorio caso o tipo do agendamento for 0, ou seja solicitaçaõ de vacina
         $validator->sometimes('vaccines_id', 'required|exists:vaccines,id', function ($input) {
             return $input->type == 0;
+        });
+
+        //Cria uma regra que verifica se o codigo do usuario é do tipo 0, na hora de inserir o professional_id deve ser selecionado somento os usuarios do tipo 0
+        $validator->after(function ($validator) {
+            if ($this->input('professional_id')) {
+                $professional = \App\Models\User::find($this->input('professional_id'));
+                if (!$professional || $professional->type_user !== 0) {
+                    $validator->errors()->add('professional_id', 'O profissional selecionado deve ser um usuário com type_user igual a 0.');
+                }
+            }
         });
     }
 }

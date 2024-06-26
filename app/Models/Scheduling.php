@@ -11,7 +11,7 @@ class Scheduling extends Model
 
     protected $fillable = [
         'patient_id',
-        'employee_id',
+        'professional_id',
         'vaccines_id',
         'status_id',
         'date',
@@ -27,6 +27,12 @@ class Scheduling extends Model
     public function employee()
     {
         return $this->belongsTo(Employee::class);
+    }
+
+    // Relacionamento com os usuarios
+    public function professional()
+    {
+        return $this->belongsTo(User::class, 'professional_id');
     }
 
     public function vaccines()

@@ -11,12 +11,11 @@ use Illuminate\Http\Request;
 
 class SchedulingController extends Controller
 {
+    protected $responseService;
 
-    protected $responceService;
-
-    public function __construct(ResponseService $responceService)
+    public function __construct(ResponseService $responseService)
     {
-        $this->responceService = $responceService;
+        $this->responseService = $responseService;
     }
 
     public function index(Request $request)
@@ -27,7 +26,7 @@ class SchedulingController extends Controller
         $user = User::find($userId);
 
         // Inicializa a variável $query com os relacionamentos necessários
-        $query = Scheduling::query()->with(['patient', 'employee', 'vaccines', 'status']);
+        $query = Scheduling::query()->with(['patient', 'professional', 'vaccines', 'status']);
 
         // Filtra pelo status, se fornecido
         if ($request->has('status')) {
@@ -40,34 +39,32 @@ class SchedulingController extends Controller
             // Ordena pela data
             $query = $query->orderBy('date', 'asc');
             // Se for admin, retorna todos os agendamentos com os relacionamentos
-            $scheduling = $query->get();
-        } elseif ($user->type_user == 1) {
-            // Ordena pelo status e pela data
-            $query = $query->orderBy('status_id', 'asc')->orderBy('date', 'asc');
-            // Se for cuidador, retorna os agendamentos associados a ele com os relacionamentos
-            $scheduling = $query->where('employee_id', $userId)->get();
+            $schedulings = $query->get();
         } else {
-            // Ordena pelo status e pela data
-            $query = $query->orderBy('status_id', 'asc')->orderBy('date', 'asc');
-            // Se for usuário normal, retorna apenas seu próprio agendamento com os relacionamentos
-            $scheduling = $query->where('patient_id', $userId)->get();
+            //SELECT para listar os agendamentos refernete ao usuario logado
+            $schedulings = Scheduling::whereIn('patient_id', function ($query) use ($userId) {
+                $query->select('id')
+                    ->from('patients')
+                    ->where('user_id', $userId)
+                    ->orderBy('status_id', 'asc')->orderBy('date', 'asc');
+            })->get();
         }
-        return SchedulingResource::collection($scheduling);
-    }
 
+        return SchedulingResource::collection($schedulings);
+    }
 
     // Validação automática ocorre aqui devido ao SchedulingRequest
     public function store(SchedulingRequest $request)
     {
         // Cria um novo agendamento usando os dados validados
         Scheduling::create($request->validated());
-        return $this->responceService->sendMessage('message', 'Agendamento criado com sucesso', 200);
+        return $this->responseService->sendMessage('message', 'Agendamento criado com sucesso', 200);
     }
 
     public function show(string $id)
     {
         // Inicializa a variável $query com os relacionamentos necessários
-        $query = Scheduling::query()->with(['patient', 'employee', 'vaccines', 'status']);
+        $query = Scheduling::query()->with(['patient', 'professional', 'vaccine', 'status']);
         $scheduling = $query->where('id', $id)->firstOrFail();
         return new SchedulingResource($scheduling);
     }
@@ -79,12 +76,12 @@ class SchedulingController extends Controller
         // Recupera o usuário
         $user = User::find($userId);
         if ($user->type_user != 0) {
-            return $this->responceService->sendMessage('message', 'Usúario sem permição para atualizar um agendamento', 200);
+            return $this->responseService->sendMessage('message', 'Usuário sem permissão para atualizar um agendamento', 200);
         }
         $scheduling = Scheduling::where('id', $id)->firstOrFail();
         $data = $request->validated();
         $scheduling->update($data);
-        return $this->responceService->sendMessage('message', 'Agendamento atualizado com sucesso', 200);
+        return $this->responseService->sendMessage('message', 'Agendamento atualizado com sucesso', 200);
     }
 
     public function destroy(string $id)

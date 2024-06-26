@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('schedulings', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('patient_id');
-            $table->unsignedBigInteger('employee_id')->nullable();
+            $table->unsignedBigInteger('professional_id')->nullable();
             $table->unsignedBigInteger('vaccines_id')->nullable();
             $table->unsignedBigInteger('status_id')->default(1);
             $table->date('date');
@@ -22,7 +22,8 @@ return new class extends Migration
             $table->string('description', 60);
 
             $table->foreign('patient_id')->references('id')->on('patients');
-            $table->foreign('employee_id')->references('id')->on('employees');
+            //Vai ligar com os users do tipo 0
+            $table->foreign('professional_id')->references('id')->on('users');
             $table->foreign('vaccines_id')->references('id')->on('vaccines');
             $table->foreign('status_id')->references('id')->on('statuses');
             $table->timestamps();
