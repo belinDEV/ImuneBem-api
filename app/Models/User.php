@@ -12,11 +12,6 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'email',
@@ -46,5 +41,18 @@ class User extends Authenticatable
     public function patients()
     {
         return $this->hasMany(Patient::class);
+    }
+    protected static function booted()
+    {
+        //Cria um Cuidador/Familiar automaticamente sempre que um usario do tipo 1 for criado
+        static::created(function ($user) {
+            if ($user->type_user === 1) {
+                \App\Models\Employee::create([
+                    'user_id' => $user->id,
+                    'name' => $user->name,
+                    'description' => 'Cuidador/Familiar gerado automaticamente',
+                ]);
+            }
+        });
     }
 }

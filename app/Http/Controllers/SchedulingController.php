@@ -29,25 +29,32 @@ class SchedulingController extends Controller
         // Inicializa a variável $query com os relacionamentos necessários
         $query = Scheduling::query()->with(['patient', 'employee', 'vaccines', 'status']);
 
+        // Filtra pelo status, se fornecido
+        if ($request->has('status')) {
+            $status = $request->query('status');
+            $query->where('status_id', $status);
+        }
+
         // Lógica para retornar os agendamentos de acordo com o tipo de usuário
         if ($user->type_user == 0) {
-            //Ordena pela data
+            // Ordena pela data
             $query = $query->orderBy('date', 'asc');
             // Se for admin, retorna todos os agendamentos com os relacionamentos
             $scheduling = $query->get();
         } elseif ($user->type_user == 1) {
-            //Ordena pelo status e pela data
+            // Ordena pelo status e pela data
             $query = $query->orderBy('status_id', 'asc')->orderBy('date', 'asc');
             // Se for cuidador, retorna os agendamentos associados a ele com os relacionamentos
             $scheduling = $query->where('employee_id', $userId)->get();
         } else {
-            //Ordena pelo status e pela data
+            // Ordena pelo status e pela data
             $query = $query->orderBy('status_id', 'asc')->orderBy('date', 'asc');
             // Se for usuário normal, retorna apenas seu próprio agendamento com os relacionamentos
             $scheduling = $query->where('patient_id', $userId)->get();
         }
         return SchedulingResource::collection($scheduling);
     }
+
 
     // Validação automática ocorre aqui devido ao SchedulingRequest
     public function store(SchedulingRequest $request)

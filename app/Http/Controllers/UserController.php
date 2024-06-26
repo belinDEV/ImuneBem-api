@@ -17,11 +17,21 @@ class UserController extends Controller
         $this->responceService = $responceService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::where('type_user', '<>', 0)->get();
+        $typeUser = $request->query('type_user', null);
+        $query = User::query();
+
+        if ($typeUser !== null) {
+            $query->where('type_user', $typeUser);
+        } else {
+            $query->where('type_user', '<>', 0);
+        }
+
+        $users = $query->get();
         return UserResource::collection($users);
     }
+
 
     public function store(UserRequest $request)
     {
