@@ -66,7 +66,6 @@ Route::prefix('/schedulings')->group(function () {
         Route::get('/{id}', [SchedulingController::class, 'show'])->name('schedulings.show');
         Route::post('/', [SchedulingController::class, 'store'])->name('schedulings.store');
         Route::put("/{id}", [SchedulingController::class, 'update'])->name('schedulings.update');
-        Route::delete("/{id}", [SchedulingController::class, 'destroy'])->name('schedulings.destroy');
     });
 });
 

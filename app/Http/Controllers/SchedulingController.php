@@ -64,7 +64,7 @@ class SchedulingController extends Controller
     public function show(string $id)
     {
         // Inicializa a variável $query com os relacionamentos necessários
-        $query = Scheduling::query()->with(['patient', 'professional', 'vaccine', 'status']);
+        $query = Scheduling::query()->with(['patient', 'professional', 'vaccines', 'status']);
         $scheduling = $query->where('id', $id)->firstOrFail();
         return new SchedulingResource($scheduling);
     }
