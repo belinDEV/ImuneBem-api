@@ -28,11 +28,8 @@ class PatientController extends Controller
         if ($user->type_user == 0) {
             $patients = Patient::all();
             // Se for cuidador retorna todos os pacientes que estão associados a ele
-        } else if ($user->type_user == 1) {
-            $patients = Patient::where('user_id', $userId)->get();
-            // Se for usuário retorna o próprio cadastro no sistema
         } else {
-            $patients = Patient::where('id', $userId)->get();
+            $patients = Patient::where('user_id', $userId)->get();
         }
 
         return PatientResource::collection($patients);
