@@ -22,6 +22,7 @@ Route::middleware(['auth:sanctum', 'extract.user.id'])->group(function () {
 
 Route::prefix('/users')->group(function () {
     Route::middleware(['auth:sanctum', 'extract.user.id'])->group(function () {
+        Route::get('/professionals', [UserController::class, 'listProfessionals'])->name('users.listProfessionals');
         Route::post('/', [UserController::class, 'store'])->name('users.store');
         Route::get('/', [UserController::class, 'index'])->name('users.index');
         Route::get('/{id}', [UserController::class, 'show'])->name('users.show');

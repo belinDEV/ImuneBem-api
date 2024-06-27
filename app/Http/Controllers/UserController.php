@@ -32,6 +32,11 @@ class UserController extends Controller
         return UserResource::collection($users);
     }
 
+    public function listProfessionals(){
+       $professionals = User::where('type_user', 0)->get();
+       return UserResource::collection($professionals);
+    }
+
 
     public function store(UserRequest $request)
     {

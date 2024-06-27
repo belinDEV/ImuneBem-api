@@ -18,7 +18,7 @@ class SchedulingRequest extends FormRequest
             'patient_id' => 'required|exists:patients,id',
             'professional_id' => 'exists:users,id',
             'date' => 'required|date',
-            'description' => 'required|string|max:60',
+            'description' => 'required|string',
             'type' => 'required|in:0,1',
         ];
 

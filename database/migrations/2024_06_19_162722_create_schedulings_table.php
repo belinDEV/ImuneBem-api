@@ -19,7 +19,7 @@ return new class extends Migration
             $table->unsignedBigInteger('status_id')->default(1);
             $table->date('date');
             $table->integer('type', false, false);
-            $table->string('description', 60);
+            $table->text('description');
 
             $table->foreign('patient_id')->references('id')->on('patients');
             //Vai ligar com os users do tipo 0
