@@ -14,6 +14,7 @@ class SchedulingResource extends JsonResource
             'patient_name' => $this->patient->name,
             'professional_id' => optional($this->professional)->id,
             'professional_name' => optional($this->professional)->name,
+            'vaccine_id' => optional($this->vaccines)->id,
             'vaccine_name' => optional($this->vaccines)->name,
             'status_id' => $this->status_id,
             'status_name' => $this->status->description,
