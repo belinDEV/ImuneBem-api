@@ -21,7 +21,7 @@ class AuthController extends Controller
         }
 
         // Deleta todos os tokens antigos
-        $user->tokens()->delete();
+        //$user->tokens()->delete();
         // Gera um token com informações adicionais (claims)
         $token = $user->createToken(
             'ImuneBem',
